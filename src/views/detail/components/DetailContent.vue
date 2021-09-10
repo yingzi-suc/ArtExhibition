@@ -7,10 +7,7 @@
             <p class="introduce-text" v-html="detail.content">
             </p>
             <div class="introduce-img">
-                <img src="../assets/1.jpg" alt="" class="img-item">
-                <img src="../assets/2.jpg" alt="" class="img-item">
-                <img src="../assets/3.jpg" alt="" class="img-item">
-                <img src="../assets/4.jpg" alt="" class="img-item">
+                <img v-for="(item,index) in detail.img" :src="item" :key="index" alt="" class="img-item">
             </div>
         </div>
         <div class="introduce-other">

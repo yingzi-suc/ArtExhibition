@@ -34,7 +34,6 @@
                             start-placeholder="开始日期"
                             end-placeholder="结束日期">
                     </el-date-picker>
-<!--                    <el-input v-model="form.extension"  placeholder="请以例如 2021.7.24—2021.10.18 格式填写"></el-input>-->
                 </el-form-item>
                 <el-form-item label="营业时间" prop="businessHours">
                     <el-time-picker
@@ -46,7 +45,6 @@
                             end-placeholder="结束时间"
                             placeholder="选择时间范围">
                     </el-time-picker>
-<!--                    <el-input v-model="form.businessHours" placeholder="请以例如 13：30—21：30 格式填写"></el-input>-->
                 </el-form-item>
                 <el-form-item label="展会地点" prop="location">
                     <el-input v-model="form.location"></el-input>
@@ -58,15 +56,27 @@
                     <el-input v-model="form.number"></el-input>
                 </el-form-item>
                 <el-form-item label="上传图片" prop="img">
+<!--                    <el-upload-->
+<!--                            class="avatar-uploader"-->
+<!--                            action="http://localhost:8080/api/hold/imgload"-->
+<!--                            :show-file-list="false"-->
+<!--                            :on-success="uploadSuccess"-->
+<!--                            :before-upload="uploadBefore"-->
+<!--                    >-->
+<!--                        <i class="el-icon-plus avatar-uploader-icon"></i>-->
+<!--                    </el-upload>-->
                     <el-upload
-                            class="avatar-uploader"
+                            class="upload-demo"
                             action="http://localhost:8080/api/hold/imgload"
-                            :show-file-list="false"
-                            :on-success="uploadSuccess"
-                            :before-upload="uploadBefore"
-                    >
-                        <img :src="this.form.img" alt="">
-                        <i class="el-icon-plus avatar-uploader-icon"></i>
+                            :on-remove="handleRemove"
+                            :before-remove="beforeRemove"
+                            multiple
+                            :limit="5"
+                            :on-exceed="handleExceed"
+                            :file-list="fileList"
+                            :on-success="uploadSuccess">
+                        <el-button size="small" type="primary">点击上传</el-button>
+                        <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
                     </el-upload>
                     <el-dialog :visible.sync="dialogVisible">
                         <img width="100%" :src="dialogImageUrl" alt="">
@@ -97,6 +107,7 @@
         },
         data() {
             return {
+                fileList:[],//图片列表
                 uploadData: {  //提交到OSS的参数
                     policy: '',
                     signature: '',
@@ -115,7 +126,8 @@
                     location: '',
                     name: '',
                     number: '',
-                    img:'',
+                    imgBanner: '',
+                    img:[],
                     content: ''
                 },
                 rules: {
@@ -212,6 +224,7 @@
                                     type: 'success',
                                     message: '办展信息提交成功'
                                 })
+                                this.fileList = []
                             }
                         })
                     } else {
@@ -222,16 +235,39 @@
             },
             //图片上传成功
             uploadSuccess(res, file) {
-                this.form.img = res.data.path
-                console.log(this.form.img);
-                // this.form.img = URL.createObjectURL(file.raw);
-            },
-            uploadBefore(file) {
-                let limitMax = 5000 * 1024;
-                if (file.size > limitMax) {
-                    this.$messageTips("大小超出限制");
-                    return false;
+                if(res.data.name === "banner.jpg") {
+                    this.form.imgBanner = res.data.path
+                } else {
+                    this.form.img.push(res.data.path)
                 }
+            },
+            //删除图片时
+            handleRemove(file, fileList) {
+                console.log(file, fileList,'1111111');
+                if(file.name === "banner.jpg") {
+                    this.form.imgBanner = ''
+                } else {
+                    //给数组封装一个方法
+                    Array.prototype.contains = function(obj) {
+                        var i = this.length;
+                        while (i--) {
+                            if (this[i] === obj) {
+                                return i;  // 返回的这个 i 就是元素的索引下标，
+                            }
+                        }
+                        return false;
+                    }
+                    const path = file.response.data.path
+                    this.form.img.splice(this.form.img.contains(path),1)
+                    // console.log(this.form.img,'删除后的form.img')
+                }
+
+            },
+            handleExceed(files, fileList) {
+                this.$message.warning(`当前限制选择 5 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+            },
+            beforeRemove(file, fileList) {
+                return this.$confirm(`确定移除 ${ file.name }？`);
             }
         }
     }

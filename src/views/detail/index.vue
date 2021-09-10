@@ -1,6 +1,6 @@
 <template>
     <div class="detail">
-        <detail-banner/>
+        <detail-banner :imgBanner="imgBanner"/>
         <detail-content :detail="detail"/>
         <art-footer/>
     </div>
@@ -22,7 +22,8 @@
         data(){
             return {
                 showBackTop: false,
-                detail:[]
+                detail:[],
+                imgBanner:''
             }
         },
         mounted() {
@@ -46,6 +47,7 @@
                     result.extension = result.extension.join('-')
                     console.log(result);
                     this.detail = result
+                    this.imgBanner = result.imgBanner
                 })
             }
         }

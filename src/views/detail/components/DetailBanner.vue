@@ -1,12 +1,13 @@
 <template>
     <div class="detailbanner">
-        <img src="../assets/fanhua.jpg" alt="">
+        <img :src="imgBanner" alt="">
     </div>
 </template>
 
 <script>
     export default {
-        name: "DetailBanner"
+        name: "DetailBanner",
+        props:['imgBanner']
     }
 </script>
 

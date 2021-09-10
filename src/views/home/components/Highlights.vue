@@ -9,7 +9,7 @@
                     :key="index" @click="goToDetail(item._id)">
                     <div class="card--artwork-img">
                         <a href="">
-                            <img :src="item.img" alt="">
+                            <img :src="item.img[0]" alt="">
                         </a>
                     </div>
                     <div class="card--artwork-center">
@@ -45,8 +45,7 @@
         },
         methods: {
             goToDetail(iid) {
-                console.log(iid)
-                // this.$router.push({name: 'Detail',query: {iid:iid}})
+                this.$router.push({name: 'Detail',query: {iid:iid}})
             },
             getInfo() {
                 homeHighlight().then(res => {
