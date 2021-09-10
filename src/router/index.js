@@ -49,6 +49,7 @@ const routes = [
 
   {
     path: '/detail',
+    name:'Detail',
     component: ()=> import('../views/detail/index')
   }
 

@@ -41,7 +41,11 @@
                 const iid = this.$route.query.iid
                 // console.log(iid)
                 detailInfo(iid).then(res => {
-                    this.detail = res.data.data
+                    const result = res.data.data
+                    result.businessHours = result.businessHours.join('-')
+                    result.extension = result.extension.join('-')
+                    console.log(result);
+                    this.detail = result
                 })
             }
         }

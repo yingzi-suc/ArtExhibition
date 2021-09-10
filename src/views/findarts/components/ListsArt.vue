@@ -4,7 +4,7 @@
             <!-- 一个-->
             <div class="listsart-content-item" v-for="(item,index) in artlist" :key="index">
                 <div class="content-item-img">
-                    <img src="../assets/artitem.jpg" alt="">
+                    <img :src="item.img" alt="">
                 </div>
                 <div class="content-item-title">
                     <span class="type">{{item.exhibitionType}}</span>
@@ -38,7 +38,7 @@
             //得到每一个详情的iid，实现跳转
             goToDetail(iid) {
                 // console.log(iid)
-                this.$router.push({path: '/detail',query: {iid}})
+                // this.$router.push({path: '/detail',query: {iid}})
             }
         }
     }

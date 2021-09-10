@@ -53,12 +53,14 @@
             //获取列表数据
             getInfo() {
                 homeHighlight().then(res => {
-                    console.log(res)
                     const result = res.data.data
                     this.total = result.length
                     result.forEach(item => {
                         item.exhibitionType = this.exhibitionTypeName[item.exhibitionType-1]
+                        item.businessHours = item.businessHours.join('-')
+                        item.extension = item.extension.join('-')
                     })
+                    console.log(result);
                     this.filterData = result
                     this.artlist = this.filterData.slice(0,9)
                 })

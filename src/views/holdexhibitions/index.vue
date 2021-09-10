@@ -29,6 +29,7 @@
                     <el-date-picker
                             v-model="form.extension"
                             type="daterange"
+                            value-format="yyyy年MM月dd日"
                             range-separator="至"
                             start-placeholder="开始日期"
                             end-placeholder="结束日期">
@@ -39,6 +40,7 @@
                     <el-time-picker
                             is-range
                             v-model="form.businessHours"
+                            value-format = 'HH:mm'
                             range-separator="至"
                             start-placeholder="开始时间"
                             end-placeholder="结束时间"
@@ -57,11 +59,14 @@
                 </el-form-item>
                 <el-form-item label="上传图片" prop="img">
                     <el-upload
-                            action="http://hrm-th-file.oss-cn-chengdu.aliyuncs.com"
-                            list-type="picture-card"
-                            :on-preview="handlePictureCardPreview"
-                            :on-remove="handleRemove">
-                        <i class="el-icon-plus"></i>
+                            class="avatar-uploader"
+                            action="http://localhost:8080/api/hold/imgload"
+                            :show-file-list="false"
+                            :on-success="uploadSuccess"
+                            :before-upload="uploadBefore"
+                    >
+                        <img :src="this.form.img" alt="">
+                        <i class="el-icon-plus avatar-uploader-icon"></i>
                     </el-upload>
                     <el-dialog :visible.sync="dialogVisible">
                         <img width="100%" :src="dialogImageUrl" alt="">
@@ -110,6 +115,7 @@
                     location: '',
                     name: '',
                     number: '',
+                    img:'',
                     content: ''
                 },
                 rules: {
@@ -214,12 +220,18 @@
                     }
                 });
             },
-            handleRemove(file, fileList) {
-                console.log(file, fileList);
+            //图片上传成功
+            uploadSuccess(res, file) {
+                this.form.img = res.data.path
+                console.log(this.form.img);
+                // this.form.img = URL.createObjectURL(file.raw);
             },
-            handlePictureCardPreview(file) {
-                this.dialogImageUrl = file.url;
-                this.dialogVisible = true;
+            uploadBefore(file) {
+                let limitMax = 5000 * 1024;
+                if (file.size > limitMax) {
+                    this.$messageTips("大小超出限制");
+                    return false;
+                }
             }
         }
     }

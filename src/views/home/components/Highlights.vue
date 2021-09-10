@@ -9,7 +9,7 @@
                     :key="index" @click="goToDetail(item._id)">
                     <div class="card--artwork-img">
                         <a href="">
-                            <img src="" alt="">
+                            <img :src="item.img" alt="">
                         </a>
                     </div>
                     <div class="card--artwork-center">
@@ -24,7 +24,6 @@
                             </div>
                         </div>
                     </div>
-                    
                 </li>
             </ul>
         </div>
@@ -46,19 +45,22 @@
         },
         methods: {
             goToDetail(iid) {
-                this.$router.push({path: '/detail',query: {iid}})
+                console.log(iid)
+                // this.$router.push({name: 'Detail',query: {iid:iid}})
             },
             getInfo() {
                 homeHighlight().then(res => {
                     const result = res.data.data
+                    //处理展会类别
                     result.forEach(item => {
                         item.exhibitionType = this.exhibitionTypeName[item.exhibitionType-1]
+                        item.businessHours = item.businessHours.join('-')
+                        item.extension = item.extension.join('-')
                     })
                     //按照点赞数排序
                     const result2 = result.sort((a,b)=>{
                         return b.dianzan - a.dianzan
                     })
-                    console.log(result2)
                     this.highlight = result2.slice(0,6)
                 })
             }
@@ -101,7 +103,7 @@
                     padding: 0 16px 32px 16px;
                     /*假充当图片*/
                     .card--artwork-img {
-                       height: 206px;
+                       width: 346.67px;
                         background-color: #b6d0a8;
                         cursor: pointer;
                     }
