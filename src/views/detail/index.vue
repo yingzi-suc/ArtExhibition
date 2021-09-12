@@ -13,7 +13,7 @@
 
     import {detailInfo} from 'network/art'
     export default {
-        name: "index",
+        name: "Detail",
         components: {
             DetailBanner,
             DetailContent,
@@ -34,18 +34,20 @@
         },
         created() {
             this.getDetailInfo()
-
         },
         methods: {
             getDetailInfo() {
                 // const iid = JSON.stringify(this.$route.query)
                 const iid = this.$route.query.iid
-                // console.log(iid)
                 detailInfo(iid).then(res => {
                     const result = res.data.data
                     result.businessHours = result.businessHours.join('-')
                     result.extension = result.extension.join('-')
                     console.log(result);
+                    //时间格式处理
+                    result.myPinglun.forEach(item => {
+                        item.time = this.dayjs(item.time).format("YYYY-MM-DD")
+                    })
                     this.detail = result
                     this.imgBanner = result.imgBanner
                 })

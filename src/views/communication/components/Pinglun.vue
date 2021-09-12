@@ -3,7 +3,6 @@
             <ul>
                 <li v-for="(item,index) in pinglun" :key="index">
                     <div>
-<!--                        <i class="iconfont icon-yonghu"></i>-->
                         <span class="username">用户{{item.username}}： </span>
                         <span class="pinglun">{{item.content}}</span>
                         <span class="time">{{item.time}}</span>
@@ -24,11 +23,6 @@
                 }
             }
         },
-        // mounted: {
-        //    ddd() {
-        //        console.log(pinglun)
-        //    }
-        // }
     }
 </script>
 

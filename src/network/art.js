@@ -38,11 +38,29 @@ export function homeHighlight() {
         method: 'get'
     })
 }
+//根据城市获取展会信息
+export function findCityArts(query) {
+    return request({
+        url:'/api/findArt/cityArts',
+        method: 'get',
+        params: query
+    })
+}
+
 //获取展会详情信息
 export function detailInfo(iid) {
     return request({
         url:'/api/detail' + '?iid='+iid,
         method: 'get'
+    })
+}
+
+//发表详情信息的评论
+export function detailPinglun(params) {
+    return request({
+        url:'/api/detail/pinglun',
+        method:'post',
+        data:params
     })
 }
 //获取艺术头条信息
@@ -58,5 +76,14 @@ export function communication() {
     return request({
         url:'/api/communication',
         method: 'get',
+    })
+}
+
+//交流中心发表讨论
+export function publicDialogg(params) {
+    return request({
+        url:'/api/publicDialog',
+        method:'post',
+        data:params
     })
 }

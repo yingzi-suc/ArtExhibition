@@ -29,7 +29,7 @@
                     <el-date-picker
                             v-model="form.extension"
                             type="daterange"
-                            value-format="yyyy年MM月dd日"
+                            value-format="yyyy/MM/dd"
                             range-separator="至"
                             start-placeholder="开始日期"
                             end-placeholder="结束日期">
@@ -92,7 +92,6 @@
             </el-form>
         </div>
         <art-footer/>
-<!--        <div class="fff"></div>-->
     </div>
 </template>
 
@@ -152,9 +151,6 @@
                     name: [
                         {required: true, trigger: "blur", message: "请输入办展人姓名"}
                     ],
-                    // img: [
-                    //     {required: true, trigger: "blur", message: "请上传图片"}
-                    // ],
                     number: [
                         {required: true, trigger: "blur", message: "请输入办展人电话"}
                     ],

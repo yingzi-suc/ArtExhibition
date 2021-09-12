@@ -10,4 +10,9 @@ Array.prototype.contains = function(obj) {
 
 const arr = ['a','b','v','f']
 arr.splice(arr.contains('b'),1)
-console.log(arr);
+
+
+const pddd =[]
+pddd.push({use:'ssa',ss:'ddd'})
+
+console.log(pddd);

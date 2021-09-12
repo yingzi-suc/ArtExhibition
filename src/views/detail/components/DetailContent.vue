@@ -28,31 +28,45 @@
                    type="textarea"
                    size="mini" style="width: 340px; vertical-align: middle;" autosize>
            </el-input>
-            <span class="emit">编辑</span>
+            <span class="emit" @click="pinglunClick">评论</span>
+        </div>
+        <div class="myPinglun">
+            <ul>
+                <li v-for="(item,index) in detail.myPinglun" :key="index">
+                    <div>
+                        <span class="username"><i class="iconfont icon-yonghu" style="color: #9acd32"></i>{{item.username}}：</span>
+                        <span class="pinglun">{{item.content}}</span>
+                        <span class="time">{{item.time}}</span>
+                    </div>
+                </li>
+            </ul>
         </div>
     </div>
 </template>
 
 <script>
+    import {detailPinglun} from 'network/art'
     export default {
         name: "DetailContent",
         props:['detail'],
         data() {
             return {
                 isDianzan: false,
+                myPinglunaaa:[],
+                onePinglun:{},
                 pinglun: '',
 //                 detail: {
 //                     content: `
-//                   快来和🍬甜萌的糖果星人一起玩呀 <br/>-<br/>
-//  澳洲艺术家 👩‍🎨Tanya Schultz，擅长使用糖粉、糖果🍬、塑料花等日常工艺材料创作令人身临其境的装置和艺术品。<br/>
-// -<br/>
-// “糖果乌托邦——Tanya Schultz 全球巡展上海站”是艺术家在中国乃至亚洲的首次大规模的亮相。<br/>
-// -<br/>
 //
+// 🟣 “成为安迪·沃霍尔”展览是传奇波普艺术家安迪·沃霍尔的艺术人生在中国最为全面的呈现<br/>
 //
-// 听说甜食🍰让人心情愉悦，糖果乌托邦是一个甜甜的展，来这里遇见萌萌的糖果生物、糖粉山、棉花糖床……拯救你的不开心。<br/>-<br/>
+// 🟣 展览从匹兹堡安迪·沃霍尔美术馆的馆藏中精选出400件作品，其中包括首次于安迪·沃霍尔美术馆之外展出的摄影作品和文献物品，特别聚焦于安迪·沃霍尔身为摄影师和实验电影制作人的艺术实践。
+// “成为安迪·沃霍尔”重新审视了与沃霍尔相关的大量文献资料与艺术遗产。
+// 基于对沃霍尔人生和多元艺术实践最新的学术研究，通过对沃霍尔艺术生涯各阶段具有代表性和并不广为人知的作品的呈现，展览充分展现了沃霍尔多元跨界
+// 实践和“复制”创作方式对视觉艺术发展的深刻影响。<br>
 //
-// 展厅还设置了一个荧光房，带你发现糖果星球🌍的另一面<br/>
+// 🟣 展出以五个章节展开，还特别设置了“波普工厂”互动体验区。展览通过绘画、照片、物品、电影、沃霍尔年轻时的文献物品，以及诸如斯蒂芬·肖
+// 尔和戴维·麦凯布同时期拍摄的沃霍尔照片，对沃霍尔的人生和职业生涯展开了非线性的探索。<br>
 //                     `,
 //                     img: [
 //
@@ -66,6 +80,7 @@
             }
         },
         methods: {
+            //点赞处理
             isDianzanClick() {
                if(this.isDianzan === false) {
                    this.isDianzan = true
@@ -73,8 +88,25 @@
                } else {
                    this.isDianzan = false
                    this.detail.dianzan-=1
-
                }
+            },
+            //评论处理
+            pinglunClick() {
+                this.onePinglun.content = this.pinglun
+                this.onePinglun.username = "小橘子"
+                const ddd = this.detail.myPinglun //新增评论数据
+                ddd.push(this.onePinglun)
+                const params = {
+                    _id:this.detail._id,
+                    myPinglun: ddd
+                }
+                detailPinglun(params).then(res => {
+                    this.$message({
+                        type:'success',
+                        message:'评论成功'
+                    })
+                    this.pinglun = ''
+                })
             }
         }
     }
@@ -162,5 +194,21 @@
     .dianzanStyle {
         color: red;
         z-index: 999;
+    }
+    .myPinglun {
+        width: 50%;
+        margin-left: 110px;
+        margin-top: 10px;
+        text-align: left;
+        color: #0d1215;
+        font-size: 12px;
+        .username  {
+            color: #737373;
+        }
+        .time {
+            color: #737373;
+            font-size: 10px;
+            margin-left: 40px;
+        }
     }
 </style>

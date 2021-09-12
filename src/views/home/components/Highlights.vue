@@ -45,7 +45,7 @@
         },
         methods: {
             goToDetail(iid) {
-                this.$router.push({name: 'Detail',query: {iid:iid}})
+                this.$router.push({path: '/detail',query: {iid:iid}})
             },
             getInfo() {
                 homeHighlight().then(res => {
@@ -61,6 +61,7 @@
                         return b.dianzan - a.dianzan
                     })
                     this.highlight = result2.slice(0,6)
+                    console.log( this.highlight)
                 })
             }
         }

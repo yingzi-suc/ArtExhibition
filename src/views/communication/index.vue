@@ -1,7 +1,52 @@
 <template>
     <div class="communication">
-        <top-search/>
-        <discuss :discuss="discuss"/>
+<!--        搜索和发表区-->
+        <div class="topsearch">
+            <el-form :inline="true" :model="topSearch" class="demo-form-inline" label-width="400px">
+                <el-form-item >
+                    <el-input v-model="topSearch.content" placeholder="请输入查询内容" style="width: 500px"></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="searchClick">搜索</el-button>
+                    <el-button type="primary" @click="dialogPublicVisible = true">我要发表</el-button>
+                </el-form-item>
+            </el-form>
+<!--            发表-->
+            <public-dialog :dialogPublicVisible = 'dialogPublicVisible' @publicClick="publicClick"/>
+        </div>
+<!--        讨论区-->
+        <div class="discuss">
+            <div class="discuss-n">
+                <ul class="info">
+                    <li class="info-discuss" v-for="(item,index) in discuss" :key="index">
+                        <div class="info-discuss-top">
+                            <div class="left"><div class="left-id">{{item.id}}</div></div>
+                            <div class="center">
+                                <div class="info-username"><i class="iconfont icon-yonghu" style="color: #9acd32"></i>{{item.username}}</div>
+                                <div class="info-content">{{item.content}}</div>
+                                <div class="info-img">
+                                    <ul class="info-img-lists" v-for="(img,index) in item.img" :key="index">
+                                        <li class="info-img-item">
+                                            <img :src="img" alt="">
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="right">
+                        <span class="dianzan" @click="dianzanClick(item.id,index)" :class="{dianzanStyle: item.isDianzan}">
+                            <i class="iconfont icon-a-dianzan1"></i>
+                            <span>{{item.dianzanNumber}}</span>
+                        </span>
+                                <span class="pinglun" ><i class="iconfont icon-pinglun"  @click="pinglunVisible = true"></i></span>
+                                <span class="time">{{item.time}}</span>
+                            </div>
+                        </div>
+                        <pinglun :pinglun="item.pinglun"/>
+                        <pinglun-dialog :pinglunVisible="pinglunVisible" :discuss="discuss" @pinglunCancel="pinglunCancel" @pinglunDefine="pinglunDefine"/>
+                    </li>
+                </ul>
+            </div>
+        </div>
         <el-pagination
                 layout="total,prev, pager, next"
                 @current-change="handleCurrentChange"
@@ -13,21 +58,28 @@
 </template>
 
 <script>
-    import TopSearch from "./components/TopSearch";
-    import Discuss from "./components/Discuss";
-    import {communication} from 'network/art'
+    import {communication,publicDialogg} from 'network/art'
+    import Pinglun from "./components/Pinglun";
+    import PinglunDialog from "./components/PinglunDialog";
+    import publicDialog from "./components/publicDialog";
     export default {
         name: "index",
         components: {
-            TopSearch,
-            Discuss
+            Pinglun,
+            PinglunDialog,
+            publicDialog,
         },
         data() {
             return {
+                pinglunVisible: false,
+                topSearch: {
+                    content: ''
+                },
+                dialogPublicVisible: false,
                 discuss:[],
                 filterData: [], //总的列表数据
                 total: 0,  //页码总数
-                currentPage:1  //显示当前页
+                currentPage:1 //显示当前页
             };
         },
         created() {
@@ -42,17 +94,48 @@
                     this.discuss = this.filterData.slice(0,5)
                     this.discuss.forEach(item => {
                         //处理时间格式
-                        const data = new Date(item.time).toJSON();
-                        item.time = new Date(+new Date(data) + 8 * 3600 * 1000).toISOString().replace(/T/g, ' ').
-                        replace(/\.[\d]{3}Z/, '')
-
+                        item.time = this.dayjs(item.time).format("YYYY-MM-DD")
                         item.pinglun.forEach(res => {
-                            const data1 = new Date(res.time).toJSON();
-                            res.time = new Date(+new Date(data1) + 8 * 3600 * 1000).toISOString().replace(/T/g, ' ').
-                            replace(/\.[\d]{3}Z/, '')
+                            res.time = this.dayjs(res.time).format("YYYY-MM-DD")
                         })
                     })
                 })
+            },
+            //收藏 点击颜色变化
+            dianzanClick(id,index) {
+                if(id === this.discuss[index].id) {
+                    if(this.discuss[index].isDianzanNum === 0) {
+                        this.discuss[index].isDianzanNum = 1
+                        this.discuss[index].isDianzan = true
+                        this.discuss[index].dianzanNumber += 1
+                    } else if(this.discuss[index].isDianzanNum === 1) {
+                        this.discuss[index].isDianzanNum = 0
+                        this.discuss[index].isDianzan = false
+                        this.discuss[index].dianzanNumber -= 1
+                    }
+                }
+            },
+            //点击发表
+            publicClick(params) {
+                publicDialogg(params).then(res => {
+                    this.$message({
+                        type:'success',
+                        message:'发表成功'
+                    })
+                    this.dialogPublicVisible = false
+                })
+                this.init()
+            },
+            //搜索讨论
+            searchClick(){
+
+            },
+
+            pinglunCancel() {
+                this.pinglunVisible = false
+            },
+            pinglunDefine() {
+                this.pinglunVisible = false
             },
             //页码跳转，每页显示 9 条数据
             handleCurrentChange(val) {
@@ -69,5 +152,98 @@
     .communication {
         width: 100%;
         margin: 0 auto;
+        .topsearch {
+            width: 750px;
+            height: 40px;
+            margin: 30px auto 10px;
+            /*background-color: red;*/
+        }
+        .discuss {
+            width: 100%;
+            max-height: 1600px;
+            overflow: hidden;
+            background-image: url("./assets/bg2.jpg");
+            background-position: 0 -80px;
+            background-repeat: no-repeat;
+            .discuss-n {
+                width: 1136px;
+                margin: 10px auto;
+                padding: 20px;
+                .info {
+                    width: 100%;
+                    .info-discuss {
+                        width: 100%;
+                        font-size: 12px;
+                        margin-bottom: 30px;
+                        .info-discuss-top {
+                            margin-bottom: 10px;
+                            display: flex;
+                            .left {
+                                width: 10%;
+                                .left-id {
+                                    width: 50px;
+                                    height: 24px;
+                                    line-height: 24px;
+                                    border-radius: 4px;
+                                    align-items: center;
+                                    background-color: #e6e6e6;
+                                    border: 1px solid #c5c5c5;
+                                }
+                            }
+                            .center {
+                                width: 64%;
+                                /*background-color: rosybrown;*/
+                                text-align: left;
+                                padding-right: 10px;
+                                .info-username {
+                                    font-size: 16px;
+                                    /*font-weight: bold;*/
+                                    color: #82867b;
+                                    margin-bottom: 20px;
+                                }
+                                .info-content {
+                                    text-indent: 8px;
+                                    margin-bottom: 6px;
+                                }
+                                .info-img {
+                                    width: 100%;
+                                    height: 120px;
+                                    .info-img-lists {
+                                        display: flex;
+                                        flex-wrap: wrap;
+                                        .info-img-item {
+                                            width: 110px;
+                                            height: 120px;
+                                            margin: 2px;
+                                            background-color: #b6d0a8;
+                                        }
+                                    }
+                                }
+                            }
+                            .right {
+                                /*background-color: indianred;*/
+                                margin-top: 40px;
+                                .dianzan, .pinglun{
+                                    color: #909090;
+                                    margin-right: 14px;
+                                    cursor: pointer;
+                                }
+                                .dianzan:hover {
+                                    color: red;
+                                }
+                                .time {
+                                    margin-left: 50px;
+                                    color: #868686;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .dianzanStyle i{
+            color: red;
+            z-index: 999;
+        }
     }
 </style>

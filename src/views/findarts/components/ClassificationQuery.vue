@@ -17,12 +17,8 @@
         data() {
             return {
                 city:'全部',
-                isShijian:'全部',
-                chengshi: ['全部','成都','上海','北京','深圳','山东','浙江','江苏','福建','安徽'],
+                chengshi: ['全部','成都','上海','北京','深圳','福建','江苏'],
             }
-        },
-        mounted() {
-
         },
         methods: {
             cityClick(item){

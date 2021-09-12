@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import Detail from '../views/detail/index'
+// const Detail = () => import('../views/detail/index')
 
 Vue.use(VueRouter)
 
@@ -50,7 +52,7 @@ const routes = [
   {
     path: '/detail',
     name:'Detail',
-    component: ()=> import('../views/detail/index')
+    component: Detail
   }
 
 ]
