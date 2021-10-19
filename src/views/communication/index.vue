@@ -8,7 +8,7 @@
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="searchClick">搜索</el-button>
-                    <el-button type="primary" @click="dialogPublicVisible = true">我要发表</el-button>
+                    <el-button type="primary" @click="myPublic">我要发表</el-button>
                 </el-form-item>
             </el-form>
 <!--            发表-->
@@ -25,24 +25,24 @@
                                 <div class="info-username"><i class="iconfont icon-yonghu" style="color: #9acd32"></i>{{item.username}}</div>
                                 <div class="info-content">{{item.content}}</div>
                                 <div class="info-img">
-                                    <ul class="info-img-lists" v-for="(img,index) in item.img" :key="index">
-                                        <li class="info-img-item">
+                                    <ul class="info-img-lists">
+                                        <li class="info-img-item"  v-for="(img,index) in item.img" :key="index">
                                             <img :src="img" alt="">
                                         </li>
                                     </ul>
                                 </div>
                             </div>
                             <div class="right">
-                        <span class="dianzan" @click="dianzanClick(item.id,index)" :class="{dianzanStyle: item.isDianzan}">
-                            <i class="iconfont icon-a-dianzan1"></i>
-                            <span>{{item.dianzanNumber}}</span>
-                        </span>
+                                <span class="dianzan" @click="dianzanClick(item.id,index)" :class="{dianzanStyle: item.isDianzan}">
+                                    <i class="iconfont icon-a-dianzan1"></i>
+                                    <span>{{item.dianzanNumber}}</span>
+                                </span>
                                 <span class="pinglun" ><i class="iconfont icon-pinglun"  @click="pinglunVisible = true"></i></span>
                                 <span class="time">{{item.time}}</span>
                             </div>
                         </div>
                         <pinglun :pinglun="item.pinglun"/>
-                        <pinglun-dialog :pinglunVisible="pinglunVisible" :discuss="discuss" @pinglunCancel="pinglunCancel" @pinglunDefine="pinglunDefine"/>
+                        <pinglun-dialog :pinglunVisible="pinglunVisible"  @pinglunCancel="pinglunCancel" @pinglunDefine="pinglunDefine"/>
                     </li>
                 </ul>
             </div>
@@ -58,7 +58,7 @@
 </template>
 
 <script>
-    import {communication,publicDialogg} from 'network/art'
+    import {communication,publicDialogg,publicDialogPinglun} from 'network/art'
     import Pinglun from "./components/Pinglun";
     import PinglunDialog from "./components/PinglunDialog";
     import publicDialog from "./components/publicDialog";
@@ -76,7 +76,6 @@
                     content: ''
                 },
                 dialogPublicVisible: false,
-                discuss:[],
                 filterData: [], //总的列表数据
                 total: 0,  //页码总数
                 currentPage:1 //显示当前页
@@ -115,7 +114,11 @@
                     }
                 }
             },
-            //点击发表
+            //点击我要发表
+            myPublic(){
+                this.dialogPublicVisible = true
+            },
+            //点击发表讨论
             publicClick(params) {
                 publicDialogg(params).then(res => {
                     this.$message({
@@ -134,8 +137,14 @@
             pinglunCancel() {
                 this.pinglunVisible = false
             },
-            pinglunDefine() {
+            pinglunDefine(content) {
                 this.pinglunVisible = false
+                console.log(content);
+
+                publicDialogPinglun(params).then(res => {
+
+                })
+
             },
             //页码跳转，每页显示 9 条数据
             handleCurrentChange(val) {
@@ -207,15 +216,14 @@
                                 }
                                 .info-img {
                                     width: 100%;
-                                    height: 120px;
                                     .info-img-lists {
                                         display: flex;
                                         flex-wrap: wrap;
                                         .info-img-item {
                                             width: 110px;
                                             height: 120px;
-                                            margin: 2px;
-                                            background-color: #b6d0a8;
+                                            margin-right: 10px;
+                                            /*background-color: #b6d0a8;*/
                                         }
                                     }
                                 }

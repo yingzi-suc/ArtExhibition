@@ -19,7 +19,7 @@
         </div>
         <div class="like-pinglun">
              <span class="dianzan" >
-                 <i class="iconfont icon-a-dianzan1" :class="{dianzanStyle: isDianzan}" @click="isDianzanClick"></i>
+                 <i class="iconfont icon-a-dianzan1" :class="{dianzanStyle: detail.isDianzan}" @click="isDianzanClick"></i>
                  <span>{{detail.dianzan}}</span>
              </span>
            <el-input
@@ -45,7 +45,7 @@
 </template>
 
 <script>
-    import {detailPinglun} from 'network/art'
+    import {detailPinglun,detailGood} from 'network/art'
     export default {
         name: "DetailContent",
         props:['detail'],
@@ -57,16 +57,19 @@
                 pinglun: '',
 //                 detail: {
 //                     content: `
+//  ⚪️关于展览<br/>
+// 波士顿美术馆联名地产大亨Monpoly先生推出的《云端的波士顿美术馆-地产大亨奇幻之旅》<br/>
 //
-// 🟣 “成为安迪·沃霍尔”展览是传奇波普艺术家安迪·沃霍尔的艺术人生在中国最为全面的呈现<br/>
+// 在云端的一场视觉盛宴，画廊将分为遇见莫奈、GIVERNY花园、浪漫拍卖行、印象火车站、博物馆商城五个站点组成，还有悬挂在顶部的巨幕油画是展中的一大亮点。<br/>
 //
-// 🟣 展览从匹兹堡安迪·沃霍尔美术馆的馆藏中精选出400件作品，其中包括首次于安迪·沃霍尔美术馆之外展出的摄影作品和文献物品，特别聚焦于安迪·沃霍尔身为摄影师和实验电影制作人的艺术实践。
-// “成为安迪·沃霍尔”重新审视了与沃霍尔相关的大量文献资料与艺术遗产。
-// 基于对沃霍尔人生和多元艺术实践最新的学术研究，通过对沃霍尔艺术生涯各阶段具有代表性和并不广为人知的作品的呈现，展览充分展现了沃霍尔多元跨界
-// 实践和“复制”创作方式对视觉艺术发展的深刻影响。<br>
+// 由地产大亨带你游览云端的艺术画廊，在这个画廊里你能感受到莫奈后半生经典的画作系列，像是他精心打造的莲花池里头有着他后半生的故事，116层的落地窗外照射
+// 进来光影使得原本在墙上的画作变得生动起来。<br/>
+//             ⚪️关于作品<br/>
 //
-// 🟣 展出以五个章节展开，还特别设置了“波普工厂”互动体验区。展览通过绘画、照片、物品、电影、沃霍尔年轻时的文献物品，以及诸如斯蒂芬·肖
-// 尔和戴维·麦凯布同时期拍摄的沃霍尔照片，对沃霍尔的人生和职业生涯展开了非线性的探索。<br>
+// 本展共有30+件作品,如《睡莲》《干草垛》<br/>
+//
+// 他的作品，让人们也对光着迷，喜爱光带来的冷暖。他留下的光也继续照耀着世界。
+//
 //                     `,
 //                     img: [
 //
@@ -79,23 +82,49 @@
 //                 }
             }
         },
+        mounted() {
+            this.init()
+        },
         methods: {
+            init(){
+                setTimeout(()=>{
+                    this.isDianzan = this.detail.isDianzan
+                },1000)
+
+            },
             //点赞处理
             isDianzanClick() {
-               if(this.isDianzan === false) {
-                   this.isDianzan = true
-                   this.detail.dianzan+=1
+               if(!this.isDianzan) {
+                   this.detail.dianzan++
                } else {
-                   this.isDianzan = false
-                   this.detail.dianzan-=1
+                   this.detail.dianzan--
                }
+                this.isDianzan = !this.isDianzan
+                this.detail.isDianzan =  this.isDianzan
+                // console.log(this.isDianzan);
+                // console.log(this.detail.dianzan);
+                 const params = {
+                    _id:this.detail._id,
+                    dianzan: this.detail.dianzan,
+                    isDianzan: this.isDianzan
+                }
+                detailGood(params).then(res=>{
+                    let isDianzan = res.data.data[0].isDianzan
+                    this.detail.isDianzan = isDianzan
+                })
             },
+
             //评论处理
             pinglunClick() {
-                this.onePinglun.content = this.pinglun
-                this.onePinglun.username = "小橘子"
-                const ddd = this.detail.myPinglun //新增评论数据
-                ddd.push(this.onePinglun)
+                //一条评论信息
+                let onePinglun ={
+                    content:this.pinglun,
+                    username:sessionStorage.getItem('user')
+                }
+                //数据库里的以前的评论信息
+                let ddd = this.detail.myPinglun
+                ddd.push(onePinglun)
+
                 const params = {
                     _id:this.detail._id,
                     myPinglun: ddd

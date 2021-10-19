@@ -43,7 +43,7 @@
                     const result = res.data.data
                     result.businessHours = result.businessHours.join('-')
                     result.extension = result.extension.join('-')
-                    console.log(result);
+                    // console.log(result);
                     //时间格式处理
                     result.myPinglun.forEach(item => {
                         item.time = this.dayjs(item.time).format("YYYY-MM-DD")

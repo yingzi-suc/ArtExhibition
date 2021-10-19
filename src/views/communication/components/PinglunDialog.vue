@@ -3,7 +3,7 @@
         <el-dialog title="评论" :visible.sync="pinglunVisible">
             <el-form :model="pinglun">
                 <el-form-item label="内容" :label-width="formLabelWidth">
-                    <el-input v-model="pinglun.pinglunContent" autocomplete="off" type="textarea"></el-input>
+                    <el-input v-model="pinglun.content" autocomplete="off" type="textarea"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -21,7 +21,7 @@
         data() {
             return {
                 pinglun: {
-                    pinglunContent: ''
+                    content: ''
                 },
                 formLabelWidth: '120px'
             }
@@ -31,7 +31,7 @@
                 this.$emit('pinglunCancel')
             },
             pinglunDefine() {
-                this.$emit('pinglunDefine')
+                this.$emit('pinglunDefine',this.pinglun)
             }
         }
     }

@@ -9,19 +9,22 @@
                 :page-size="4"
                 :total="total">
         </el-pagination>
+        <art-footer/>
     </div>
 </template>
 
 <script>
     import Banner from "./components/Banner"
     import ArtHeadlines from "./components/ArtHeadlines";
+    import ArtFooter from "../../components/common/footer/ArtFooter";
 
     import {artheadlines} from 'network/art'
     export default {
         name: "artheadlines",
         components: {
             Banner,
-            ArtHeadlines
+            ArtHeadlines,
+            ArtFooter
         },
         data(){
             return {

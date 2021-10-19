@@ -34,7 +34,6 @@
 </template>
 
 <script>
-    import {publicDialogg} from 'network/art'
     export default {
         name: "publicDialog",
         props: ['dialogPublicVisible','discuss'],
@@ -92,15 +91,7 @@
             },
             //发表
             publicClick() {
-
                 this.$emit('publicClick',this.publicdialog)
-                // publicDialogg(this.publicdialog).then(res => {
-                //     this.dialogPublicVisible = false
-                //     this.$message({
-                //         type:'success',
-                //         message:'发表成功'
-                //     })
-                // })
             }
         }
     }

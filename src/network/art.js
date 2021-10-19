@@ -22,6 +22,14 @@ export function userLogout() {
         url: 'api/logout',
     })
 }
+//用户升级
+export function promotionUser(query) {
+    return request({
+        url:'/api/promotion',
+        method: 'get',
+        params: query
+    })
+}
 
 //办展会
 export function holdExhibition(params) {
@@ -63,6 +71,15 @@ export function detailPinglun(params) {
         data:params
     })
 }
+
+//详情信息的点赞
+export function detailGood(params) {
+    return request({
+        url:"/api/detail/dianzan",
+        method:'post',
+        data:params
+    })
+}
 //获取艺术头条信息
 export function artheadlines() {
     return request({
@@ -83,6 +100,15 @@ export function communication() {
 export function publicDialogg(params) {
     return request({
         url:'/api/publicDialog',
+        method:'post',
+        data:params
+    })
+}
+
+//发表详情信息的评论
+export function publicDialogPinglun(params) {
+    return request({
+        url:'/api/publicDialog/pinglun',
         method:'post',
         data:params
     })

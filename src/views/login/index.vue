@@ -2,7 +2,7 @@
     <div class="login">
         <div class="login-bg">
             <div class="logo-img">
-                <img src="~assets/img/tate-logo.jpg" alt="">
+                <img src="~assets/img/tate-logo.png" alt="">
                 <p>用户登录</p>
             </div>
             <div class="user-login">
@@ -55,6 +55,17 @@
                         const user = res.data.data.username
                         this.$bus.$emit('userSave',user)
                         this.$router.push('/home')
+                        //保存登录状态和用户信息
+                        sessionStorage.setItem("user",user)
+                        sessionStorage.setItem("role",res.data.data.role)
+                        //保存用户状态到vuex
+                        let userInfo = {user:user,role:res.data.data.role}
+                        this.$store.commit('saveUserInfo',userInfo)
+
+                        //登录成功，登陆状态改为1
+                        this.$store.commit('updateUserState')
+                        console.log(this.$store.state.userInfo,'userInfoLogin')
+                        console.log(this.$store.state.userState,'userStateLogin')
                         this.$message({
                             type: 'success',
                             message: '登陆成功'
@@ -81,11 +92,13 @@
         position: fixed;
         top: 0;
         left: 0;
-        background-color: #ffffff;
+        background: url("../../assets/img/login-bg.jpg") repeat -180px -80px;
         .login-bg {
-            width: 400px;
+            width: 530px;
             height: 520px;
-            margin: 40px auto;
+            background: rgba(255,255,255,0.6);
+            margin: 80px auto;
+            padding: 0 60px;
             .logo-img {
                 width: 200px;
                 margin: 0 auto;
@@ -104,7 +117,7 @@
                 font-weight: 600;
                 padding: 30px 30px 0 0;
                 border-radius: 4px;
-                margin-bottom: 20px;
+                margin-bottom: 30px;
             }
             .footer {
                 border: 2px solid #dadada;

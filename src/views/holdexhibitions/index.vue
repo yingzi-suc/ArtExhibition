@@ -55,7 +55,7 @@
                 <el-form-item label="联系电话" prop="number">
                     <el-input v-model="form.number"></el-input>
                 </el-form-item>
-                <el-form-item label="上传图片" prop="img">
+                <el-form-item label="上传展会图片" prop="img">
 <!--                    <el-upload-->
 <!--                            class="avatar-uploader"-->
 <!--                            action="http://localhost:8080/api/hold/imgload"-->
@@ -81,6 +81,25 @@
                     <el-dialog :visible.sync="dialogVisible">
                         <img width="100%" :src="dialogImageUrl" alt="">
                     </el-dialog>
+                </el-form-item>
+                <el-form-item label="上传证明材料图片" prop="evidenceImg">
+                    <el-upload
+                            class="upload"
+                            action="http://localhost:8080/api/hold/evidenceImg"
+                            :on-remove="handleRemoveEvidence"
+                            :before-remove="beforeRemove"
+                            multiple
+                            :limit="5"
+                            :on-exceed="handleExceed"
+                            :file-list="evidenceList"
+                            :on-success="evidenceSuccess">
+                        <el-button size="small" type="primary">点击上传</el-button>
+                        <div slot="tip" class="el-upload__tip">证明材料如场地租用信息、当地办展证明</div>
+                    </el-upload>
+                    <el-dialog :visible.sync="evidenceVisible">
+                        <img width="100%" :src="evidence" alt="">
+                    </el-dialog>
+
                 </el-form-item>
                 <el-form-item label="展会介绍" prop="content">
                     <el-input  type="textarea" v-model="form.content"></el-input>
@@ -127,6 +146,7 @@
                     number: '',
                     imgBanner: '',
                     img:[],
+                    evidenceImg:[],
                     content: ''
                 },
                 rules: {
@@ -197,7 +217,10 @@
                 ],
                 value: '', //展会类别
                 dialogImageUrl: '',
-                dialogVisible: false
+                dialogVisible: false,
+                evidence:'', //证明材料
+                evidenceVisible: false,
+                evidenceList:[],//证明材料图片列表
             }
         },
         mounted() {
@@ -210,19 +233,30 @@
             onSubmit(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        const param = this.form
-                        param['dianzan'] = 0
-                        // console.log(param)
-                        holdExhibition(param).then(res => {
-                            if(res.data.code === 0) {
-                                this.$refs[formName].resetFields();
-                                this.$message({
-                                    type: 'success',
-                                    message: '办展信息提交成功'
-                                })
-                                this.fileList = []
-                            }
-                        })
+                        let role = sessionStorage.getItem('role')
+                        if(role === "超级用户") {
+                            const param = this.form
+                            param['dianzan'] = 0
+                            // console.log(param)
+                            holdExhibition(param).then(res => {
+                                if(res.data.code === 0) {
+                                    this.$refs[formName].resetFields();
+                                    this.$message({
+                                        type: 'success',
+                                        message: '办展信息提交成功'
+                                    })
+                                    this.fileList = []
+                                    this.evidenceList = []
+                                }
+                            })
+                        } else {
+                            this.form = []
+                            this.$message({
+                                type:'error',
+                                message:'您不是超级用户，无法办展'
+                            })
+
+                        }
                     } else {
                         console.log('error submit!!');
                         return false;
@@ -236,6 +270,11 @@
                 } else {
                     this.form.img.push(res.data.path)
                 }
+            },
+            //证明材料上传成功时
+            evidenceSuccess(res,file) {
+                // console.log(res.data.path);
+                this.form.evidenceImg.push(res.data.path)
             },
             //删除图片时
             handleRemove(file, fileList) {
@@ -258,6 +297,21 @@
                     // console.log(this.form.img,'删除后的form.img')
                 }
 
+            },
+            //删除证明材料图片时
+            handleRemoveEvidence(file,fileList) {
+                //给数组封装一个方法
+                Array.prototype.contains = function(obj) {
+                    var i = this.length;
+                    while (i--) {
+                        if (this[i] === obj) {
+                            return i;  // 返回的这个 i 就是元素的索引下标，
+                        }
+                    }
+                    return false;
+                }
+                const path = file.response.data.path
+                this.form.evidenceImg.splice(this.form.evidenceImg.contains(path),1)
             },
             handleExceed(files, fileList) {
                 this.$message.warning(`当前限制选择 5 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
