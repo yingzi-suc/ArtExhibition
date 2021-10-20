@@ -113,3 +113,21 @@ export function publicDialogPinglun(params) {
         data:params
     })
 }
+
+//发表详情信息的评论
+export function publicDialogSearch(params) {
+    return request({
+        url:'/api/publicDialog/search',
+        method:'post',
+        data:params
+    })
+}
+
+//交流中心点赞
+export function publicDialogDianzan(params) {
+    return request({
+        url:'/api/publicDialog/dianzan',
+        method:'post',
+        data:params
+    })
+}

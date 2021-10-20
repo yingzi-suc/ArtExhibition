@@ -12,7 +12,7 @@
                 </el-form-item>
             </el-form>
 <!--            发表-->
-            <public-dialog :dialogPublicVisible = 'dialogPublicVisible' @publicClick="publicClick"/>
+            <public-dialog :dialogPublicVisible = 'dialogPublicVisible' @publicClick="publicClick" @cancelPublic="cancelPublic"/>
         </div>
 <!--        讨论区-->
         <div class="discuss">
@@ -20,7 +20,7 @@
                 <ul class="info">
                     <li class="info-discuss" v-for="(item,index) in discuss" :key="index">
                         <div class="info-discuss-top">
-                            <div class="left"><div class="left-id">{{item.id}}</div></div>
+<!--                            <div class="left"><div class="left-id">{{item.id}}</div></div>-->
                             <div class="center">
                                 <div class="info-username"><i class="iconfont icon-yonghu" style="color: #9acd32"></i>{{item.username}}</div>
                                 <div class="info-content">{{item.content}}</div>
@@ -37,12 +37,12 @@
                                     <i class="iconfont icon-a-dianzan1"></i>
                                     <span>{{item.dianzanNumber}}</span>
                                 </span>
-                                <span class="pinglun" ><i class="iconfont icon-pinglun"  @click="pinglunVisible = true"></i></span>
+                                <span class="pinglun" ><i class="iconfont icon-pinglun"  @click="pinglunClick()"></i></span>
                                 <span class="time">{{item.time}}</span>
                             </div>
                         </div>
                         <pinglun :pinglun="item.pinglun"/>
-                        <pinglun-dialog :pinglunVisible="pinglunVisible"  @pinglunCancel="pinglunCancel" @pinglunDefine="pinglunDefine"/>
+                        <pinglun-dialog :pinglunVisible="pinglunVisible" :pinglun="pinglun" :idd="item._id" :id="index" @pinglunCancel="pinglunCancel" @pinglunDefine="pinglunDefine"/>
                     </li>
                 </ul>
             </div>
@@ -58,7 +58,7 @@
 </template>
 
 <script>
-    import {communication,publicDialogg,publicDialogPinglun} from 'network/art'
+    import {communication,publicDialogg,publicDialogPinglun,publicDialogSearch,publicDialogDianzan} from 'network/art'
     import Pinglun from "./components/Pinglun";
     import PinglunDialog from "./components/PinglunDialog";
     import publicDialog from "./components/publicDialog";
@@ -71,6 +71,7 @@
         },
         data() {
             return {
+                discuss:[],
                 pinglunVisible: false,
                 topSearch: {
                     content: ''
@@ -78,7 +79,11 @@
                 dialogPublicVisible: false,
                 filterData: [], //总的列表数据
                 total: 0,  //页码总数
-                currentPage:1 //显示当前页
+                currentPage:1, //显示当前页
+                pinglun: {
+                    content: '',
+                    username:sessionStorage.getItem('user')
+                },
             };
         },
         created() {
@@ -87,7 +92,6 @@
         methods: {
             init(){
                 communication().then(res => {
-                    console.log(res.data.data);
                     this.filterData = res.data.data
                     this.total = this.filterData.length
                     this.discuss = this.filterData.slice(0,5)
@@ -100,23 +104,55 @@
                     })
                 })
             },
+            //搜索讨论
+            searchClick(){
+                publicDialogSearch({content:this.topSearch.content}).then(res => {
+                    this.topSearch.content = ''
+                    this.filterData = res.data.data
+                    this.total = this.filterData.length
+                    this.discuss = this.filterData.slice(0,5)
+                    this.discuss.forEach(item => {
+                        //处理时间格式
+                        item.time = this.dayjs(item.time).format("YYYY-MM-DD")
+                        item.pinglun.forEach(res => {
+                            res.time = this.dayjs(res.time).format("YYYY-MM-DD")
+                        })
+                    })
+                })
+            },
+
             //收藏 点击颜色变化
             dianzanClick(id,index) {
                 if(id === this.discuss[index].id) {
-                    if(this.discuss[index].isDianzanNum === 0) {
-                        this.discuss[index].isDianzanNum = 1
+                    if(!this.discuss[index].isDianzan) {
                         this.discuss[index].isDianzan = true
-                        this.discuss[index].dianzanNumber += 1
-                    } else if(this.discuss[index].isDianzanNum === 1) {
-                        this.discuss[index].isDianzanNum = 0
+                        this.discuss[index].dianzanNumber ++
+                    } else if(this.discuss[index].isDianzan) {
                         this.discuss[index].isDianzan = false
-                        this.discuss[index].dianzanNumber -= 1
+                        this.discuss[index].dianzanNumber --
                     }
+                    // console.log(this.discuss[index].isDianzan);
+                    // console.log(this.discuss[index].dianzanNumber);
+                    const params = {
+                        _id: this.discuss[index]._id,
+                        isDianzan: this.discuss[index].isDianzan,
+                        dianzanNumber: this.discuss[index].dianzanNumber
+                    }
+                    publicDialogDianzan(params).then(res => {
+                        console.log(res);
+                        let isDianzan = res.data.data[0].isDianzan
+                        this.discuss[index].isDianzan = isDianzan
+                    })
                 }
             },
             //点击我要发表
             myPublic(){
                 this.dialogPublicVisible = true
+            },
+            //点击我要评论
+            pinglunClick() {
+                this.pinglunVisible = true
+
             },
             //点击发表讨论
             publicClick(params) {
@@ -129,22 +165,43 @@
                 })
                 this.init()
             },
-            //搜索讨论
-            searchClick(){
-
-            },
 
             pinglunCancel() {
                 this.pinglunVisible = false
             },
-            pinglunDefine(content) {
+            pinglunDefine(pinglun,id,idd) {
                 this.pinglunVisible = false
-                console.log(content);
+                //新增的一个评论
+                let onePinglun = pinglun
+                //将评论放进数组里
+                let ddd = this.discuss[id].pinglun
+                ddd.push(onePinglun)
 
+                const params = {
+                    _id: idd,
+                    pinglun: ddd
+                }
                 publicDialogPinglun(params).then(res => {
-
+                    let pinglun = res.data.data[0].pinglun
+                    pinglun.forEach(item => {
+                        item.time = this.dayjs(item.time).format("YYYY-MM-DD")
+                    })
+                    this.discuss[id].pinglun = pinglun
+                    this.pinglun = {
+                        content: '',
+                        username:sessionStorage.getItem('user')
+                    }
+                    this.$message({
+                        type:'success',
+                        message:'评论成功'
+                    })
                 })
 
+
+            },
+            //取消发表
+            cancelPublic(){
+                this.dialogPublicVisible = false
             },
             //页码跳转，每页显示 9 条数据
             handleCurrentChange(val) {
@@ -184,6 +241,7 @@
                         width: 100%;
                         font-size: 12px;
                         margin-bottom: 30px;
+                        overflow: hidden;
                         .info-discuss-top {
                             margin-bottom: 10px;
                             display: flex;

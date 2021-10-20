@@ -87,7 +87,7 @@
             //取消发表
             cancel() {
                 this.publicdialog.img = []
-                this.dialogPublicVisible = false
+                this.$emit('cancelPublic')
             },
             //发表
             publicClick() {

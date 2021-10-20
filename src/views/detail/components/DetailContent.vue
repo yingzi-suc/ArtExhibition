@@ -130,6 +130,11 @@
                     myPinglun: ddd
                 }
                 detailPinglun(params).then(res => {
+                    let pinglun = res.data.data[0].myPinglun
+                    pinglun.forEach(item => {
+                        item.time = this.dayjs(item.time).format("YYYY-MM-DD")
+                    })
+                    this.detail.myPinglun = pinglun
                     this.$message({
                         type:'success',
                         message:'评论成功'

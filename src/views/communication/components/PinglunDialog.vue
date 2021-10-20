@@ -17,21 +17,23 @@
 <script>
     export default {
         name: "PinglunDialog",
-        props: ['pinglunVisible'],
+        props: ['pinglunVisible','id','idd','pinglun'],
         data() {
             return {
-                pinglun: {
-                    content: ''
-                },
+                // pinglun: {
+                //     content: '',
+                //     username:sessionStorage.getItem('user')
+                // },
                 formLabelWidth: '120px'
             }
         },
         methods: {
+            pinglunDefine() {
+                this.$emit('pinglunDefine',this.pinglun,this.id,this.idd)
+            },
+            //取消评论
             pinglunCancel() {
                 this.$emit('pinglunCancel')
-            },
-            pinglunDefine() {
-                this.$emit('pinglunDefine',this.pinglun)
             }
         }
     }
