@@ -243,7 +243,7 @@
                                     this.$refs[formName].resetFields();
                                     this.$message({
                                         type: 'success',
-                                        message: '办展信息提交成功'
+                                        message: '您的办展信息已经提交成功，请等待审核！'
                                     })
                                     this.fileList = []
                                     this.evidenceList = []
@@ -255,7 +255,6 @@
                                 type:'error',
                                 message:'您不是超级用户，无法办展'
                             })
-
                         }
                     } else {
                         console.log('error submit!!');

@@ -64,8 +64,8 @@
 
                         //登录成功，登陆状态改为1
                         this.$store.commit('updateUserState')
-                        console.log(this.$store.state.userInfo,'userInfoLogin')
-                        console.log(this.$store.state.userState,'userStateLogin')
+                        // console.log(this.$store.state.userInfo,'userInfoLogin')
+                        // console.log(this.$store.state.userState,'userStateLogin')
                         this.$message({
                             type: 'success',
                             message: '登陆成功'

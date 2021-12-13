@@ -116,7 +116,9 @@
 
             //评论处理
             pinglunClick() {
-                //一条评论信息
+                 let user = sessionStorage.getItem('user')
+                if(user) {
+                        //一条评论信息
                 let onePinglun ={
                     content:this.pinglun,
                     username:sessionStorage.getItem('user')
@@ -141,6 +143,14 @@
                     })
                     this.pinglun = ''
                 })
+                } else {
+                      this.$message({
+                        type:'error',
+                        message:'请登录后发表评论'
+                    })
+                     this.pinglun = ''
+                }
+            
             }
         }
     }

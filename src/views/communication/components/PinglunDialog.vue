@@ -17,7 +17,7 @@
 <script>
     export default {
         name: "PinglunDialog",
-        props: ['pinglunVisible','id','idd','pinglun'],
+        props: ['pinglunVisible','pinglun'],
         data() {
             return {
                 // pinglun: {
@@ -29,7 +29,7 @@
         },
         methods: {
             pinglunDefine() {
-                this.$emit('pinglunDefine',this.pinglun,this.id,this.idd)
+                this.$emit('pinglunDefine',this.pinglun)
             },
             //取消评论
             pinglunCancel() {

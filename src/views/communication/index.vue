@@ -37,12 +37,12 @@
                                     <i class="iconfont icon-a-dianzan1"></i>
                                     <span>{{item.dianzanNumber}}</span>
                                 </span>
-                                <span class="pinglun" ><i class="iconfont icon-pinglun"  @click="pinglunClick()"></i></span>
+                                <span class="pinglun" ><i class="iconfont icon-pinglun"  @click="pinglunClick(index,item._id)"></i></span>
                                 <span class="time">{{item.time}}</span>
                             </div>
                         </div>
                         <pinglun :pinglun="item.pinglun"/>
-                        <pinglun-dialog :pinglunVisible="pinglunVisible" :pinglun="pinglun" :idd="item._id" :id="index" @pinglunCancel="pinglunCancel" @pinglunDefine="pinglunDefine"/>
+                        <pinglun-dialog :pinglunVisible="pinglunVisible" :pinglun="pinglun" @pinglunCancel="pinglunCancel" @pinglunDefine="pinglunDefine"/>
                     </li>
                 </ul>
             </div>
@@ -84,6 +84,8 @@
                     content: '',
                     username:sessionStorage.getItem('user')
                 },
+                iid:0,
+                pinglunIndex:0,
             };
         },
         created() {
@@ -102,6 +104,7 @@
                             res.time = this.dayjs(res.time).format("YYYY-MM-DD")
                         })
                     })
+                    console.log(this.discuss,'discuss')
                 })
             },
             //搜索讨论
@@ -147,10 +150,22 @@
             },
             //点击我要发表
             myPublic(){
-                this.dialogPublicVisible = true
+                let user = sessionStorage.getItem('user')
+                if(user) {
+                    this.dialogPublicVisible = true
+                } else {
+                    this.$message({
+                        type:'error',
+                        message:'请登录后发表文章'
+                    })
+                }
+                
             },
             //点击我要评论
-            pinglunClick() {
+            pinglunClick(index,id) {
+                this.pinglunIndex = index
+                this.iid = id
+                // console.log(this.pinglunIndex)
                 this.pinglunVisible = true
 
             },
@@ -169,16 +184,19 @@
             pinglunCancel() {
                 this.pinglunVisible = false
             },
-            pinglunDefine(pinglun,id,idd) {
+            pinglunDefine(pinglun) {
                 this.pinglunVisible = false
-                //新增的一个评论
+                 let user = sessionStorage.getItem('user')
+                if(user) {
+                     //新增的一个评论
                 let onePinglun = pinglun
+                // debugger
                 //将评论放进数组里
-                let ddd = this.discuss[id].pinglun
+                let ddd = this.discuss[this.pinglunIndex].pinglun
                 ddd.push(onePinglun)
 
                 const params = {
-                    _id: idd,
+                    _id: this.iid,
                     pinglun: ddd
                 }
                 publicDialogPinglun(params).then(res => {
@@ -186,7 +204,7 @@
                     pinglun.forEach(item => {
                         item.time = this.dayjs(item.time).format("YYYY-MM-DD")
                     })
-                    this.discuss[id].pinglun = pinglun
+                    this.discuss[this.pinglunIndex].pinglun = pinglun
                     this.pinglun = {
                         content: '',
                         username:sessionStorage.getItem('user')
@@ -195,7 +213,19 @@
                         type:'success',
                         message:'评论成功'
                     })
+
                 })
+                }
+               else {
+                     this.$message({
+                        type:'error',
+                        message:'请登录后发表评论'
+                    })
+                       this.pinglun = {
+                        content: '',
+                        username:sessionStorage.getItem('user')
+                    }
+               }
 
 
             },
