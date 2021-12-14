@@ -71,12 +71,15 @@
                         })
                     }
                 })
+                
+               
+           } 
             },
             goToRegister() {
                 this.$router.push('/login')
             }
         }
-    }
+    
 </script>
 
 <style scoped lang="scss">

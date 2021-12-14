@@ -16,7 +16,7 @@
 </template>
 
 <script>
-    import {userLogout,promotionUser} from 'network/art'
+    import {userLogout,promotionUser,loginlog} from 'network/art'
     export default {
         name: "HeaderTop",
         data(){
@@ -97,6 +97,18 @@
                     cancelButtonText: '否',
                     type: 'warning'
                 }).then(() => {
+
+                     let params = {
+                    username:sessionStorage.getItem('user'),
+                    role:sessionStorage.getItem('role'),
+                    logoutDate:this.$fn.getDate(),
+                    detail:'退出'
+                }
+                console.log(params,'params')
+                loginlog(params).then(res=>{
+                   
+                })
+
                     userLogout().then(res => {
                         
                     })

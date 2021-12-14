@@ -131,3 +131,12 @@ export function publicDialogDianzan(params) {
         data:params
     })
 }
+
+//用户登录存储登录信息
+export function loginlog(params) {
+    return request({
+        url:'/api/login/loginlog',
+        method:'post',
+        data:params
+    })
+}

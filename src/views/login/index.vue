@@ -77,6 +77,8 @@
                         })
                     }
                 })
+               
+             
             },
             goToRegister() {
                 this.$router.push('/register')

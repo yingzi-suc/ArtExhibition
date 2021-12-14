@@ -19,6 +19,8 @@
 
     import ArtFooter from "../../components/common/footer/ArtFooter";
     import BackTop from "../../components/common/BackTop";
+
+     import {loginlog} from 'network/art'
     export default {
         name: "index",
         components: {
@@ -37,6 +39,18 @@
         },
         mounted() {
             window.addEventListener("scroll",this.handleScroll);
+           if(sessionStorage.getItem('user')){
+                let params = {
+                    username:sessionStorage.getItem('user'),
+                    role:sessionStorage.getItem('role'),
+                    loginDate:this.$fn.getDate(),
+                    detail:'登录'
+                }
+                console.log(params,'params')
+                loginlog(params).then(res=>{
+                   
+                })
+           }            
         },
         destroyed() {
             document.removeEventListener('scroll', this.handleScroll)

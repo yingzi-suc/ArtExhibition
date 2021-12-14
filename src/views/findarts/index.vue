@@ -92,7 +92,7 @@
                         this.thisCity = 0;
                         break;
                 }
-                console.log( this.thisCity )
+                // console.log( this.thisCity )
                 if(this.thisCity && this.thisCity !== 0) {
                     findCityArts({city:this.thisCity}).then(res => {
                         const result = res.data.data
