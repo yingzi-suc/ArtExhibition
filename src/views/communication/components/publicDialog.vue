@@ -41,7 +41,7 @@
             return {
                 fileList:[],//图片列表
                 publicdialog: {
-                    username: '花花',
+                    username: sessionStorage.getItem('user'),
                     content: '',
                     img:[],
                 },
@@ -92,6 +92,8 @@
             //发表
             publicClick() {
                 this.$emit('publicClick',this.publicdialog)
+                this.publicdialog.content = ''
+                this.publicdialog.img = []
             }
         }
     }

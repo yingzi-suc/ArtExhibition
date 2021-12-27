@@ -176,6 +176,7 @@
                         type:'success',
                         message:'发表成功'
                     })
+                    
                     this.dialogPublicVisible = false
                 })
                 this.init()
