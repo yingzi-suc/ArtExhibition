@@ -50,18 +50,25 @@
             getInfo() {
                 homeHighlight().then(res => {
                     const result = res.data.data
+                    
+                     let result1 = []
+                    result.forEach(item=>{
+                        if(item.isApproval){
+                            result1.push(item)
+                        }
+                    })
                     //处理展会类别
-                    result.forEach(item => {
+                    result1.forEach(item => {
                         item.exhibitionType = this.exhibitionTypeName[item.exhibitionType-1]
                         item.businessHours = item.businessHours.join('-')
                         item.extension = item.extension.join('-')
                     })
+                   
                     //按照点赞数排序
-                    const result2 = result.sort((a,b)=>{
+                    const result2 = result1.sort((a,b)=>{
                         return b.dianzan - a.dianzan
                     })
                     this.highlight = result2.slice(0,6)
-                    console.log( this.highlight)
                 })
             }
         }

@@ -52,7 +52,8 @@
             promotion() {
                 let username = this.$store.state.userInfo.user
                 this.role = this.$store.state.userInfo.role
-                if(this.$store.state.userState === 0) {
+                console.log(this.$store.state.userState,'ssssss')
+                if(this.$store.state.userState !== 0) {
                     if(this.role === "普通用户") {
                         this.$confirm('是否升级您的用户?', '提示', {
                             confirmButtonText: '是',

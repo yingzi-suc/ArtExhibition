@@ -56,13 +56,19 @@
                 if(this.thisCity === 0) {
                     homeHighlight().then(res => {
                         const result = res.data.data
-                        this.total = result.length
-                        result.forEach(item => {
+                         let result1 = []
+                    result.forEach(item=>{
+                        if(item.isApproval){
+                            result1.push(item)
+                        }
+                    })
+                        this.total = result1.length
+                        result1.forEach(item => {
                             item.exhibitionType = this.exhibitionTypeName[item.exhibitionType-1]
                             item.businessHours = item.businessHours.join('-')
                             item.extension = item.extension.join('-')
                         })
-                        this.filterData = result
+                        this.filterData = result1
                         this.artlist = this.filterData.slice(0,9)
                     })
                 }
@@ -96,13 +102,19 @@
                 if(this.thisCity && this.thisCity !== 0) {
                     findCityArts({city:this.thisCity}).then(res => {
                         const result = res.data.data
-                        this.total = result.length
-                        result.forEach(item => {
+                         let result1 = []
+                    result.forEach(item=>{
+                        if(item.isApproval){
+                            result1.push(item)
+                        }
+                    })
+                        this.total = result1.length
+                        result1.forEach(item => {
                             item.exhibitionType = this.exhibitionTypeName[item.exhibitionType-1]
                             item.businessHours = item.businessHours.join('-')
                             item.extension = item.extension.join('-')
                         })
-                        this.filterData = result
+                        this.filterData = result1
                         this.artlist = this.filterData.slice(0,9)
                     })
                 } else if(this.thisCity === 0) {

@@ -31,7 +31,7 @@
             </div>
             <div class="footer">
                 <span>已有帐号？</span>
-                <span class="register" @click="goToRegister">点击登录</span>
+                <span class="register" @click="goToLogin">点击登录</span>
             </div>
         </div>
     </div>
@@ -70,14 +70,13 @@
                             message: '该用户名已存在！'
                         })
                     }
-                })
-                
-               
-           } 
-            },
-            goToRegister() {
+                })  
+           },
+            goToLogin() {
                 this.$router.push('/login')
             }
+            },
+           
         }
     
 </script>
